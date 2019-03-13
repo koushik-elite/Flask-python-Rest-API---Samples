@@ -1,0 +1,57 @@
+Resources:
+  Contacts:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      TableName: "${self:provider.stage}-contacts"
+      AttributeDefinitions:
+        - AttributeName: "userid"
+          AttributeType: "S"
+        - AttributeName: "emailid"
+          AttributeType: "S"
+        - AttributeName: "createdat"
+          AttributeType: "S"
+        - AttributeName: "username"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "userid"
+          KeyType: HASH
+        - AttributeName: "emailid"
+          KeyType: RANGE
+      LocalSecondaryIndexes:
+      - IndexName: createddatetimeIndex
+        KeySchema:
+          - AttributeName: userid
+            KeyType: HASH
+          - AttributeName: createdat
+            KeyType: RANGE
+        Projection:
+          ProjectionType: KEYS_ONLY
+      - IndexName: usernameIndex
+        KeySchema:
+          - AttributeName: userid
+            KeyType: HASH
+          - AttributeName: username
+            KeyType: RANGE
+        Projection:
+          ProjectionType: KEYS_ONLY
+      # Set the capacity based on the stage
+      ProvisionedThroughput:
+        ReadCapacityUnits: ${self:custom.tableThroughput}
+        WriteCapacityUnits: ${self:custom.tableThroughput}
+  Contacthistory:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      TableName: "${self:provider.stage}-contacthistory"
+      AttributeDefinitions:
+        - AttributeName: "contacttype"
+          AttributeType: "S"
+        - AttributeName: "createdat"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "contacttype"
+          KeyType: HASH
+        - AttributeName: "createdat"
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: ${self:custom.tableThroughput}
+        WriteCapacityUnits: ${self:custom.tableThroughput}
